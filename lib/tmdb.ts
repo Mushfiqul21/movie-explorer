@@ -107,12 +107,53 @@ export function isCategoryKey(value: string | undefined): value is CategoryKey {
   return CATEGORIES.some((c) => c.key === value);
 }
 
-export async function getMovies(type: CategoryKey, page = 1) {
+type MoviesResponse = {
+  results: Movie[];
+  page: number;
+  total_pages: number;
+};
+
+export async function getMovies(type: CategoryKey, page = 1, genre?: string) {
+  // With a genre selected, use TMDB's discover endpoint
+  if (genre) {
+    const params: Record<string, string> = {
+      page: String(page),
+      with_genres: genre,
+      include_adult: "false",
+      sort_by: "popularity.desc",
+    };
+
+    if (type === "top_rated") {
+      params.sort_by = "vote_average.desc";
+      params["vote_count.gte"] = "300"; // avoid movies with just a few votes
+    } else if (type === "upcoming") {
+      params.sort_by = "primary_release_date.asc";
+      params["primary_release_date.gte"] = new Date()
+        .toISOString()
+        .slice(0, 10);
+    }
+
+    return tmdbFetch<MoviesResponse>("/discover/movie", params);
+  }
+
   const category = CATEGORIES.find((c) => c.key === type)!;
-  return tmdbFetch<{ results: Movie[]; page: number; total_pages: number }>(
-    category.endpoint,
-    { page: String(page) }
-  );
+  return tmdbFetch<MoviesResponse>(category.endpoint, {
+    page: String(page),
+  });
+}
+
+export async function getGenres(): Promise<Genre[]> {
+  const data = await tmdbFetch<{ genres: Genre[] }>("/genre/movie/list");
+  return data.genres;
+}
+
+// Builds /?type=popular&genre=28 (skips defaults to keep URLs clean)
+export function buildHomeUrl(type: CategoryKey, genre?: string) {
+  const params = new URLSearchParams();
+  if (type !== "trending") params.set("type", type);
+  if (genre) params.set("genre", genre);
+  const qs = params.toString();
+  return qs ? `/?${qs}` : "/";
 }
 
 export async function getTrailerKey(id: number): Promise<string | null> {

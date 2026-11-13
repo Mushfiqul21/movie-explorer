@@ -7,10 +7,12 @@ import MovieGrid from "./MovieGrid";
 export default function LoadMoreGrid({
   initialMovies,
   type,
+  genre,
   totalPages,
 }: {
   initialMovies: Movie[];
   type: string;
+  genre?: string;
   totalPages: number;
 }) {
   const [movies, setMovies] = useState(initialMovies);
@@ -24,7 +26,9 @@ export default function LoadMoreGrid({
     setLoading(true);
     setError(false);
     try {
-      const res = await fetch(`/api/movies?type=${type}&page=${page + 1}`);
+const res = await fetch(
+  `/api/movies?type=${type}&page=${page + 1}${genre ? `&genre=${genre}` : ""}`
+);
       if (!res.ok) throw new Error("Request failed");
       const data: { results: Movie[] } = await res.json();
 
