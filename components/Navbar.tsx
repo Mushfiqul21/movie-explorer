@@ -8,7 +8,7 @@ export default function Navbar() {
       <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link href="/" className="flex items-center gap-2">
           <span className="grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br from-red-500 to-red-700 text-lg shadow-lg shadow-red-600/30">
-            🎬
+            ME
           </span>
           <span className="hidden text-lg font-bold tracking-tight text-white sm:block">
             Movie<span className="text-red-500">Explorer</span>

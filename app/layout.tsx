@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import Navbar from "@/components/Navbar";
 import "./globals.css";
+import Footer from "@/components/Footer";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -26,17 +27,7 @@ export default function RootLayout({
         <main className="mx-auto max-w-7xl px-4 pb-16 pt-24 sm:px-6 lg:px-8">
           {children}
         </main>
-        <footer className="border-t border-white/10 py-8 text-center text-sm text-neutral-500">
-          Built with Next.js · Data from{" "}
-          <a
-            href="https://www.themoviedb.org"
-            target="_blank"
-            rel="noreferrer"
-            className="text-neutral-300 hover:text-white"
-          >
-            TMDB
-          </a>
-        </footer>
+        <Footer />
       </body>
     </html>
   );
